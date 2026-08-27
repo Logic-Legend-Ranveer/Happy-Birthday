@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Happy Birthday</title>
-<meta name="description" content="A birthday page for Devesh, turning 15.">
+<title id="doc-title">Happy Birthday</title>
+<meta id="doc-desc" name="description" content="A birthday page.">
 <meta name="theme-color" content="#17121A">
 <meta name="color-scheme" content="dark">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -81,9 +81,10 @@
     justify-content: center;
     gap: 7px;
     flex-wrap: wrap;
-    row-gap: 10px;
+    row-gap: 15px;
     margin: 0 auto 2rem;
     padding-top: 20px;
+    max-width: 500px;
   }
   .candle {
     display: flex;
@@ -136,6 +137,7 @@
     opacity: 0;
     transform: scale(0.3);
     pointer-events: none;
+    z-index: 2;
   }
   body.wish-made .puff { animation: puffOut 0.7s ease-out forwards; }
 
@@ -305,33 +307,20 @@
 <main>
   <section class="hero">
     <div class="wrap">
-      <span class="eyebrow">15 candles &middot; 1 wish</span>
+      <!-- Injected via JS -->
+      <span class="eyebrow" id="top-eyebrow"></span>
 
-      <div class="candle-row" aria-hidden="true">
+      <!-- Candles populated dynamically based on age -->
+      <div class="candle-row" id="candle-row" aria-hidden="true">
         <span class="puff"></span>
-        <div class="candle" style="--i:0; --h:34px; --r:-4deg;"><span class="flame-wrap"><span class="flame"></span></span><span class="wick"></span></div>
-        <div class="candle" style="--i:1; --h:40px; --r:2deg;"><span class="flame-wrap"><span class="flame"></span></span><span class="wick"></span></div>
-        <div class="candle" style="--i:2; --h:37px; --r:-1deg;"><span class="flame-wrap"><span class="flame"></span></span><span class="wick"></span></div>
-        <div class="candle" style="--i:3; --h:44px; --r:3deg;"><span class="flame-wrap"><span class="flame"></span></span><span class="wick"></span></div>
-        <div class="candle" style="--i:4; --h:32px; --r:-3deg;"><span class="flame-wrap"><span class="flame"></span></span><span class="wick"></span></div>
-        <div class="candle" style="--i:5; --h:41px; --r:1deg;"><span class="flame-wrap"><span class="flame"></span></span><span class="wick"></span></div>
-        <div class="candle" style="--i:6; --h:38px; --r:-2deg;"><span class="flame-wrap"><span class="flame"></span></span><span class="wick"></span></div>
-        <div class="candle" style="--i:7; --h:46px; --r:4deg;"><span class="flame-wrap"><span class="flame"></span></span><span class="wick"></span></div>
-        <div class="candle" style="--i:8; --h:35px; --r:0deg;"><span class="flame-wrap"><span class="flame"></span></span><span class="wick"></span></div>
-        <div class="candle" style="--i:9; --h:42px; --r:-3deg;"><span class="flame-wrap"><span class="flame"></span></span><span class="wick"></span></div>
-        <div class="candle" style="--i:10; --h:39px; --r:2deg;"><span class="flame-wrap"><span class="flame"></span></span><span class="wick"></span></div>
-        <div class="candle" style="--i:11; --h:33px; --r:-1deg;"><span class="flame-wrap"><span class="flame"></span></span><span class="wick"></span></div>
-        <div class="candle" style="--i:12; --h:45px; --r:3deg;"><span class="flame-wrap"><span class="flame"></span></span><span class="wick"></span></div>
-        <div class="candle" style="--i:13; --h:37px; --r:-2deg;"><span class="flame-wrap"><span class="flame"></span></span><span class="wick"></span></div>
-        <div class="candle" style="--i:14; --h:40px; --r:1deg;"><span class="flame-wrap"><span class="flame"></span></span><span class="wick"></span></div>
       </div>
 
       <div class="hero-text">
         <h1>
           <span class="line1">Happy birthday</span>
-          <span class="line2">Devesh</span>
+          <span class="line2" id="hero-name"></span>
         </h1>
-        <p class="subhead">Fifteen skips the milestone hype &mdash; so here's a proper one anyway.</p>
+        <p class="subhead" id="hero-subhead"></p>
         <button type="button" class="wish-btn" id="wishBtn">Make the wish</button>
         <div class="wish-note" id="wishNote">It's already on its way.</div>
       </div>
@@ -340,17 +329,16 @@
 
   <section class="message">
     <div class="wrap reveal">
-      <h2 class="eyebrow-title">For Devesh</h2>
-      <div class="card">
-        <p>Fifteen is a strange kind of milestone &mdash; not one of the loud ones, but real all the same. More freedom, higher stakes, better stories.</p>
-        <p>Here's to a year that's actually yours: good friends, easy days, and a few risks worth taking.</p>
+      <h2 class="eyebrow-title" id="msg-eyebrow"></h2>
+      <div class="card" id="msg-card">
+        <!-- Message populated dynamically -->
       </div>
     </div>
   </section>
 
   <section class="closing">
     <div class="wrap reveal">
-      <h2>Happy 15th,<br>Devesh.</h2>
+      <h2 id="closing-title"></h2>
       <p>Go have the best one yet.</p>
     </div>
   </section>
@@ -358,6 +346,64 @@
 
 <script>
 (function () {
+  // ==========================================
+  // CONFIGURATION: Edit these details easily!
+  // ==========================================
+  const PERSON = {
+    name: "Ranveer",
+    age: 15,
+    gender: "male" // Options: "male", "female", "other"
+  };
+
+  // 1. Get correct pronouns based on gender
+  function getPronouns(gender) {
+    const g = gender.toLowerCase();
+    if (g === "male") return { subject: "he", object: "him", possessive: "his" };
+    if (g === "female") return { subject: "she", object: "her", possessive: "her" };
+    return { subject: "they", object: "them", possessive: "their" }; 
+  }
+  const pronouns = getPronouns(PERSON.gender);
+
+  // 2. Helper to get "st", "nd", "rd", "th" for the age
+  function getOrdinal(n) {
+    const s = ["th", "st", "nd", "rd"];
+    const v = n % 100;
+    return n + (s[(v - 20) % 10] || s[v] || s[0]);
+  }
+
+  // 3. Populate HTML Elements dynamically
+  document.getElementById('doc-title').innerText = `Happy Birthday ${PERSON.name}`;
+  document.getElementById('doc-desc').content = `A birthday page for ${PERSON.name}, turning ${PERSON.age}.`;
+  
+  document.getElementById('top-eyebrow').innerHTML = `${PERSON.age} candles &middot; 1 wish`;
+  document.getElementById('hero-name').innerText = PERSON.name;
+  document.getElementById('hero-subhead').innerHTML = `Turning ${PERSON.age} skips the milestone hype &mdash; so here's a proper one anyway.`;
+  
+  document.getElementById('msg-eyebrow').innerText = `For ${PERSON.name}`;
+  
+  // Notice the use of our dynamic pronouns here
+  document.getElementById('msg-card').innerHTML = `
+    <p>Turning ${PERSON.age} is a strange kind of milestone &mdash; not one of the loud ones, but real all the same. The world is opening up for ${pronouns.object}, bringing more freedom, higher stakes, and better stories.</p>
+    <p>Here's to a year filled with good friends, easy days, and a few risks worth taking as ${pronouns.subject} steps into ${pronouns.possessive} next chapter.</p>
+  `;
+  
+  document.getElementById('closing-title').innerHTML = `Happy ${getOrdinal(PERSON.age)},<br>${PERSON.name}.`;
+
+  // 4. Generate the exact number of candles dynamically
+  const candleRow = document.getElementById('candle-row');
+  let candlesHTML = '<span class="puff"></span>';
+  for (let i = 0; i < PERSON.age; i++) {
+    // Randomize flame timings, heights, and rotations slightly for a natural look
+    const height = Math.floor(Math.random() * 15) + 32; // Random height 32-46
+    const rotation = Math.floor(Math.random() * 9) - 4; // Random rotation -4 to 4
+    candlesHTML += `<div class="candle" style="--i:${i}; --h:${height}px; --r:${rotation}deg;"><span class="flame-wrap"><span class="flame"></span></span><span class="wick"></span></div>`;
+  }
+  candleRow.innerHTML = candlesHTML;
+
+
+  // ==========================================
+  // Interactions & Animations (Existing Code)
+  // ==========================================
   var wishBtn = document.getElementById('wishBtn');
   var wishNote = document.getElementById('wishNote');
   var wished = false;
