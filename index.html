@@ -350,9 +350,16 @@
   // CONFIGURATION: Edit these details easily!
   // ==========================================
   const PERSON = {
-    name: "Ranveer",
+    name: "Devesh",
     age: 15,
-    gender: "male" // Options: "male", "female", "other"
+    gender: "male", // Options: "male", "female", "other"
+    
+    // Write your message here. Each item in the array becomes a new paragraph <p>.
+    // Available placeholders: {name}, {age}, {subject} (he/she/they), {object} (him/her/them), {possessive} (his/her/their)
+    messageParagraphs: [
+      "Turning {age} is a strange kind of milestone &mdash; not one of the loud ones, but real all the same. The world is opening up for you, bringing more freedom, higher stakes, and better stories.",
+      "Here's to a year filled with good friends, easy days, and a few risks worth taking as {subject} steps into {possessive} next chapter."
+    ]
   };
 
   // 1. Get correct pronouns based on gender
@@ -381,11 +388,18 @@
   
   document.getElementById('msg-eyebrow').innerText = `For ${PERSON.name}`;
   
-  // Notice the use of our dynamic pronouns here
-  document.getElementById('msg-card').innerHTML = `
-    <p>Turning ${PERSON.age} is a strange kind of milestone &mdash; not one of the loud ones, but real all the same. The world is opening up for ${pronouns.object}, bringing more freedom, higher stakes, and better stories.</p>
-    <p>Here's to a year filled with good friends, easy days, and a few risks worth taking as ${pronouns.subject} steps into ${pronouns.possessive} next chapter.</p>
-  `;
+  // Format and inject the custom message paragraphs
+  const formattedMessage = PERSON.messageParagraphs.map(paragraph => {
+    let text = paragraph
+      .replace(/{name}/g, PERSON.name)
+      .replace(/{age}/g, PERSON.age)
+      .replace(/{subject}/g, pronouns.subject)
+      .replace(/{object}/g, pronouns.object)
+      .replace(/{possessive}/g, pronouns.possessive);
+    return `<p>${text}</p>`;
+  }).join("");
+  
+  document.getElementById('msg-card').innerHTML = formattedMessage;
   
   document.getElementById('closing-title').innerHTML = `Happy ${getOrdinal(PERSON.age)},<br>${PERSON.name}.`;
 
@@ -399,7 +413,6 @@
     candlesHTML += `<div class="candle" style="--i:${i}; --h:${height}px; --r:${rotation}deg;"><span class="flame-wrap"><span class="flame"></span></span><span class="wick"></span></div>`;
   }
   candleRow.innerHTML = candlesHTML;
-
 
   // ==========================================
   // Interactions & Animations (Existing Code)
@@ -435,6 +448,5 @@
   }
 })();
 </script>
-
 </body>
 </html>
