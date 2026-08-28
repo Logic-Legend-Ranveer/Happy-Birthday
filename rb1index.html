@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Raksha Bandhan!</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #d81b60; /* Warm Pink */
+            --secondary-color: #ffb300; /* Festive Gold */
+            --bg-color: #fff0f5; /* Lavender Blush */
+            --text-color: #4a148c;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #ffe0b2 0%, #f48fb1 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        /* Floating background elements */
+        .floating-element {
+            position: absolute;
+            color: var(--secondary-color);
+            opacity: 0.6;
+            animation: float 6s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+
+        /* Container styling */
+        .container {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 90%;
+            width: 450px;
+            border: 3px solid var(--secondary-color);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Typography */
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            color: var(--primary-color);
+            font-size: 3rem;
+            margin-top: 0;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(216, 27, 96, 0.2);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        p {
+            color: var(--text-color);
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .signature {
+            margin-top: 30px;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+
+        /* Interactive Button */
+        button {
+            background: linear-gradient(45deg, var(--primary-color), #ff4081);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(216, 27, 96, 0.4);
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(216, 27, 96, 0.6);
+        }
+
+        /* Screens */
+        #message-screen {
+            display: none;
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Confetti Canvas */
+        #confetti {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="floating-element" style="top: 10%; left: 10%; font-size: 2rem;">✨</div>
+    <div class="floating-element" style="top: 20%; right: 15%; font-size: 3rem; animation-delay: 1s;">🌸</div>
+    <div class="floating-element" style="bottom: 15%; left: 20%; font-size: 2.5rem; animation-delay: 2s;">🪔</div>
+    <div class="floating-element" style="bottom: 25%; right: 10%; font-size: 2rem; animation-delay: 0.5s;">✨</div>
+
+    <canvas id="confetti"></canvas>
+
+    <div class="container" id="card-container">
+        <div id="welcome-screen">
+            <h1>Happy Raksha Bandhan!</h1>
+            <p>I made something special just for you...</p>
+            <button id="open-btn">Tap to Reveal 💌</button>
+        </div>
+
+        <div id="message-screen">
+            <h1 style="font-size: 2.5rem;">To <span id="display-sister"></span>,</h1>
+            <p id="display-message"></p>
+            <p class="signature">With lots of love,<br><span id="display-sender"></span></p>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 🛠️ CUSTOMIZE YOUR DETAILS HERE 🛠️
+        // ==========================================
+        const RAKHI_DETAILS = {
+            sisterName: "Mihi Didi",
+            senderName: "Babbi",
+            message: "Thank you for always being my best supporter, my secret-keeper, and my best friend. Even when we fight over silly things, you know I love you the most. Wishing you all the happiness in the world!"
+        };
+        // ==========================================
+
+        // Populate HTML with the variables above
+        document.getElementById('display-sister').textContent = RAKHI_DETAILS.sisterName;
+        document.getElementById('display-sender').textContent = RAKHI_DETAILS.senderName;
+        document.getElementById('display-message').textContent = RAKHI_DETAILS.message;
+
+        // Button click logic
+        document.getElementById('open-btn').addEventListener('click', function() {
+            // Hide welcome screen, show message screen
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('message-screen').style.display = 'block';
+            
+            // Trigger Confetti Animation
+            fireConfetti();
+        });
+
+        // Simple Confetti Logic for the celebration effect
+        function fireConfetti() {
+            const canvas = document.getElementById('confetti');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const colors = ['#d81b60', '#ffb300', '#f48fb1', '#8e24aa', '#1e88e5'];
+
+            for (let i = 0; i < 100; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    w: Math.random() * 10 + 5,
+                    h: Math.random() * 10 + 5,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    speedY: Math.random() * 3 + 2,
+                    speedX: Math.random() * 2 - 1,
+                    rotation: Math.random() * 360,
+                    rotationSpeed: Math.random() * 10 - 5
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let active = false;
+
+                particles.forEach(p => {
+                    p.y += p.speedY;
+                    p.x += p.speedX;
+                    p.rotation += p.rotationSpeed;
+
+                    if (p.y < canvas.height) active = true;
+
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rotation * Math.PI / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                    ctx.restore();
+                });
+
+                if (active) requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        // Resize canvas if window changes
+        window.addEventListener('resize', () => {
+            const canvas = document.getElementById('confetti');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
